@@ -1,0 +1,233 @@
+_schema-version: 3.3.0
+ID: version2
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+modules:
+  - name: version2-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: version2-auth
+      - name: version2-db
+      - name: version2-destination
+
+  - name: version2-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: version2-db
+  - name: version2
+    type: approuter.nodejs
+    path: app/router
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: version2-auth
+      - name: version2-destination
+      - name: version2-html5-runtime
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
+
+  - name: version2-app-deployer
+    type: com.sap.application.content
+    path: gen
+    build-parameters:
+      build-result: app/
+      requires:
+        - name: version2movementconsole
+          artifacts:
+            - movement-console.zip
+          target-path: app/
+        - name: version2stockoverview
+          artifacts:
+            - stock-overview.zip
+          target-path: app/
+        - name: version2stockanalysis
+          artifacts:
+            - stockanalysis.zip
+          target-path: app/
+        - name: version2warehousemanagement
+          artifacts:
+            - warehousemanagement.zip
+          target-path: app/
+    requires:
+      - name: version2-auth
+      - name: srv-api
+      - name: version2-html5-repo-host
+        parameters:
+          content-target: true
+          config:
+            HTML5Runtime_enabled: true
+    parameters:
+      config:
+        destinations:
+          - Name: srv-api
+            URL: ~{srv-api/srv-url}
+            Authentication: NoAuthentication
+            Type: HTTP
+            ProxyType: Internet
+            HTML5.ForwardAuthToken: true
+            HTML5.DynamicDestination: true
+
+  - name: version2movementconsole
+    type: html5
+    path: app/movement-console
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+  - name: version2stockoverview
+    type: html5
+    path: app/stock-overview
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+  - name: version2stockanalysis
+    type: html5
+    path: app/stockanalysis
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+  - name: version2warehousemanagement
+    type: html5
+    path: app/warehousemanagement
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+
+  - name: version2-destinations
+    type: com.sap.application.content
+    requires:
+      - name: version2-auth
+        parameters:
+          service-key:
+            name: version2-auth-key
+      - name: version2-html5-repo-host
+        parameters:
+          service-key:
+            name: version2-html5-repo-host-key
+      - name: srv-api
+      - name: version2-destination
+        parameters:
+          content-target: true
+    build-parameters:
+      no-source: true
+    parameters:
+      content:
+        instance:
+          existing_destinations_policy: update
+          destinations:
+            - Name: version2-html5-repository
+              ServiceInstanceName: version2-html5-repo-host
+              ServiceKeyName: version2-html5-repo-host-key
+              sap.cloud.service: version2.service
+            - Name: version2-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: version2-auth
+              ServiceKeyName: version2-auth-key
+              sap.cloud.service: version2.service
+
+resources:
+  - name: version2-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: version2-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+          redirect-uris:
+            - https://*~{app-api/app-uri}/**
+        role-collections:
+          - name: 'Operator (version2 ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Operator'
+          - name: 'WarehouseManager (version2 ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.WarehouseManager'
+          - name: 'Administrator (version2 ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.Administrator'
+    requires:
+      - name: app-api
+  - name: version2-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: version2-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+    requires:
+      - name: srv-api
+
+  - name: version2-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+  - name: version2-html5-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime

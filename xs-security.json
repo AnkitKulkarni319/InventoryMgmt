@@ -1,0 +1,43 @@
+{
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Operator",
+      "description": "Operator"
+    },
+    {
+      "name": "$XSAPPNAME.WarehouseManager",
+      "description": "WarehouseManager"
+    },
+    {
+      "name": "$XSAPPNAME.Administrator",
+      "description": "Administrator"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "Operator",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Operator"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "WarehouseManager",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.WarehouseManager"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Administrator",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Administrator"
+      ],
+      "attribute-references": []
+    }
+  ]
+}

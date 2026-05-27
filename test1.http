@@ -1,0 +1,183 @@
+
+### =========================
+### CATEGORIES
+### =========================
+
+POST http://localhost:4004/odata/v4/inventory/Categories
+Content-Type: application/json
+
+{
+  "CategoryCode": "CAT001",
+  "CategoryName": "Playing Equipment"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Categories
+Content-Type: application/json
+
+{
+  "CategoryCode": "CAT002",
+  "CategoryName": "Apparel"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/Categories
+
+
+
+### =========================
+### PRODUCTS
+### =========================
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ProductCode": "BAT001",
+  "Name": "Cricket Bat",
+  "Description": "English Willow Bat",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 5,
+  "MaxStockLevel": 50,
+  "Category_ID": "75eac78d-9dfd-4bb8-8563-e92afa30f6e2"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ProductCode": "BALL001",
+  "Name": "Cricket Ball",
+  "Description": "Leather Ball",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 10,
+  "MaxStockLevel": 200,
+  "Category_ID": "1e29b420-0902-4149-b8bd-a5737c49966d"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ProductCode": "JERSEY001",
+  "Name": "Team Jersey",
+  "Description": "Official Jersey",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 20,
+  "MaxStockLevel": 500,
+    "Category_ID":"a47cb7a2-306c-4a3b-977f-187cfba81211"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/Products
+
+
+
+### =========================
+### WAREHOUSES
+### =========================
+
+POST http://localhost:4004/odata/v4/inventory/Warehouses
+Content-Type: application/json
+
+{
+  "WarehouseCode": "WH001",
+  "Name": "Bangalore Warehouse",
+  "Location": "Bangalore",
+  "Capacity": 1000
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Warehouses
+Content-Type: application/json
+
+{
+  "WarehouseCode": "WH002",
+  "Name": "Chennai Warehouse",
+  "Location": "Chennai",
+  "Capacity": 800
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/Warehouses
+
+
+###
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "Product_ID": "1034687b-2317-424d-a10c-6b9f670b7e95",
+  "Warehouse_ID": "b851232a-d6ba-4ebb-9b72-b1431ae348d4",
+  "BinLocation": "A1",
+  "CurrentStock": 50,
+  "ReservedStock": 10
+}
+
+
+
+###
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "Product_ID": "1034687b-2317-424d-a10c-6b9f670b7e95",
+  "Warehouse_ID": "d4b3b402-6a1d-4c5f-ab87-fa49af8433b2",
+  "BinLocation": "A2",
+  "CurrentStock": 20,
+  "ReservedStock": 5
+}
+
+
+###
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "Product_ID": "9e3d5f3c-8ef6-461a-bbab-0365a58d9f9f",
+  "Warehouse_ID": "b851232a-d6ba-4ebb-9b72-b1431ae348d4",
+  "BinLocation": "B1",
+  "CurrentStock": 100,
+  "ReservedStock": 20
+}
+
+
+###
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "Product_ID": "b6742eec-19d3-40d4-9bef-750d8a90d3f3",
+  "Warehouse_ID": "d4b3b402-6a1d-4c5f-ab87-fa49af8433b2",
+  "BinLocation": "C1",
+  "CurrentStock": 200,
+  "ReservedStock": 30
+}
+
+
+
+###
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "Product_ID": "1034687b-2317-424d-a10c-6b9f670b7e95",
+  "Warehouse_ID": "b851232a-d6ba-4ebb-9b72-b1431ae348d4",
+  "BinLocation": "TEST",
+  "CurrentStock": 2,
+  "ReservedStock": 1
+}
+###
+GET http://localhost:4004/odata/v4/inventory/getLowStockAlerts(threshold=3)
+
+###
+GET http://localhost:4004/odata/v4/inventory/getLowStockAlerts(threshold=10)

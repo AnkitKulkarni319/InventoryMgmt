@@ -1,0 +1,550 @@
+### =====================================================
+### 1. CATEGORIES
+### =====================================================
+
+POST http://localhost:4004/odata/v4/inventory/Categories
+Content-Type: application/json
+
+{
+  "ID": "C1",
+  "CategoryCode": "CAT001",
+  "CategoryName": "Playing Equipment"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Categories
+Content-Type: application/json
+
+{
+  "ID": "C2",
+  "CategoryCode": "CAT002",
+  "CategoryName": "Apparel"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Categories
+Content-Type: application/json
+
+{
+  "ID": "C3",
+  "CategoryCode": "CAT003",
+  "CategoryName": "Training Equipment"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Categories
+Content-Type: application/json
+
+{
+  "ID": "C4",
+  "CategoryCode": "CAT004",
+  "CategoryName": "Medical & Fitness"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/Categories
+### expect: 4 rows
+
+
+### =====================================================
+### 2. PRODUCTS
+### =====================================================
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ID": "P1",
+  "ProductCode": "BAT001",
+  "Name": "Cricket Bat",
+  "Description": "English Willow Bat",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 5,
+  "MaxStockLevel": 50,
+  "Category_ID": "C1"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ID": "P2",
+  "ProductCode": "BALL001",
+  "Name": "Cricket Ball",
+  "Description": "Leather Ball",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 10,
+  "MaxStockLevel": 200,
+  "Category_ID": "C1"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ID": "P3",
+  "ProductCode": "JERSEY001",
+  "Name": "Team Jersey",
+  "Description": "Official Jersey",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 20,
+  "MaxStockLevel": 500,
+  "Category_ID": "C2"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ID": "P4",
+  "ProductCode": "PADS001",
+  "Name": "Batting Pads",
+  "Description": "Protective Batting Pads",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 5,
+  "MaxStockLevel": 100,
+  "Category_ID": "C3"
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Products
+Content-Type: application/json
+
+{
+  "ID": "P5",
+  "ProductCode": "GLOVE001",
+  "Name": "Batting Gloves",
+  "Description": "Professional Batting Gloves",
+  "UnitOfMeasure": "PCS",
+  "MinStockLevel": 8,
+  "MaxStockLevel": 150,
+  "Category_ID": "C3"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/Products
+### expect: 5 rows
+
+
+### =====================================================
+### 3. WAREHOUSES
+### =====================================================
+
+POST http://localhost:4004/odata/v4/inventory/Warehouses
+Content-Type: application/json
+
+{
+  "ID": "W1",
+  "WarehouseCode": "WH001",
+  "Name": "Main Warehouse",
+  "Location": "Bangalore",
+  "Capacity": 2000
+}
+
+###
+
+POST http://localhost:4004/odata/v4/inventory/Warehouses
+Content-Type: application/json
+
+{
+  "ID": "W2",
+  "WarehouseCode": "WH002",
+  "Name": "Secondary Warehouse",
+  "Location": "Mysore",
+  "Capacity": 1000
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/Warehouses
+### expect: 2 rows
+
+
+### =====================================================
+### 4. STOCK LEVELS — all products in both warehouses
+### =====================================================
+
+### P1 - Cricket Bat in W1 (healthy stock)
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S1",
+  "Product_ID": "P1",
+  "Warehouse_ID": "W1",
+  "BinLocation": "A1",
+  "CurrentStock": 30,
+  "ReservedStock": 2
+}
+
+###
+
+### P1 - Cricket Bat in W2
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S2",
+  "Product_ID": "P1",
+  "Warehouse_ID": "W2",
+  "BinLocation": "A1",
+  "CurrentStock": 10,
+  "ReservedStock": 0
+}
+
+###
+
+### P2 - Cricket Ball in W1 (healthy stock)
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S3",
+  "Product_ID": "P2",
+  "Warehouse_ID": "W1",
+  "BinLocation": "A2",
+  "CurrentStock": 50,
+  "ReservedStock": 5
+}
+
+###
+
+### P2 - Cricket Ball in W2 (starts at 0, receives via transfer)
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S4",
+  "Product_ID": "P2",
+  "Warehouse_ID": "W2",
+  "BinLocation": "A2",
+  "CurrentStock": 0,
+  "ReservedStock": 0
+}
+
+###
+
+### P3 - Team Jersey in W1
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S5",
+  "Product_ID": "P3",
+  "Warehouse_ID": "W1",
+  "BinLocation": "B1",
+  "CurrentStock": 100,
+  "ReservedStock": 10
+}
+
+###
+
+### P3 - Team Jersey in W2
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S6",
+  "Product_ID": "P3",
+  "Warehouse_ID": "W2",
+  "BinLocation": "B1",
+  "CurrentStock": 40,
+  "ReservedStock": 5
+}
+
+###
+
+### P4 - Batting Pads in W1 (LOW STOCK — below MinStockLevel of 5)
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S7",
+  "Product_ID": "P4",
+  "Warehouse_ID": "W1",
+  "BinLocation": "C1",
+  "CurrentStock": 3,
+  "ReservedStock": 0
+}
+
+###
+
+### P5 - Batting Gloves in W1 (LOW STOCK — below MinStockLevel of 8)
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S8",
+  "Product_ID": "P5",
+  "Warehouse_ID": "W1",
+  "BinLocation": "C2",
+  "CurrentStock": 5,
+  "ReservedStock": 1
+}
+
+###
+
+### P5 - Batting Gloves in W2
+POST http://localhost:4004/odata/v4/inventory/StockLevels
+Content-Type: application/json
+
+{
+  "ID": "S9",
+  "Product_ID": "P5",
+  "Warehouse_ID": "W2",
+  "BinLocation": "C2",
+  "CurrentStock": 20,
+  "ReservedStock": 0
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/StockLevels
+### expect: 9 rows, all with AvailableStock computed
+
+
+### =====================================================
+### 5. INVENTORY FUNCTIONS
+### =====================================================
+
+### getAvailableStock — P1/W1
+### expect: 28 (30 - 2)
+GET http://localhost:4004/odata/v4/inventory/getAvailableStock(productID='P1',warehouseID='W1')
+
+###
+
+### getAvailableStock — P2/W1
+### expect: 45 (50 - 5)
+GET http://localhost:4004/odata/v4/inventory/getAvailableStock(productID='P2',warehouseID='W1')
+
+###
+
+### getAvailableStock — 404 test
+### expect: 404 Stock not found
+GET http://localhost:4004/odata/v4/inventory/getAvailableStock(productID='INVALID',warehouseID='W1')
+
+###
+
+### getLowStockAlerts — default (below MinStockLevel)
+### expect: S7 (P4/W1 stock=3 < min=5) and S8 (P5/W1 stock=5 < min=8)
+GET http://localhost:4004/odata/v4/inventory/getLowStockAlerts()
+
+
+
+### expect:
+### S2 (P1/W2 stock=10)
+### S4 (P2/W2 stock=0)
+### S7 (P4/W1 stock=3)
+### S8 (P5/W1 stock=5)
+  GET http://localhost:4004/odata/v4/inventory/getLowStockAlerts(threshold=15)
+
+
+### =====================================================
+### 6. GOODS RECEIPT — stock increases
+### =====================================================
+
+### Receipt P4/W1 qty=20 — restocks low item
+### expect: S7 CurrentStock 3 → 23
+POST http://localhost:4004/odata/v4/movement/goodsReceipt
+Content-Type: application/json
+
+{
+  "productID": "P4",
+  "warehouseID": "W1",
+  "qty": 20,
+  "movedBy": "CoachA"
+}
+
+###
+
+### Receipt P1/W1 qty=5
+### expect: S1 CurrentStock 30 → 35
+POST http://localhost:4004/odata/v4/movement/goodsReceipt
+Content-Type: application/json
+
+{
+  "productID": "P1",
+  "warehouseID": "W1",
+  "qty": 5,
+  "movedBy": "CoachA"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/StockLevels
+### verify: S1 CurrentStock=35, S7 CurrentStock=23
+
+
+### =====================================================
+### 7. GOODS ISSUE — stock decreases
+### =====================================================
+
+### Issue P1/W1 qty=3
+### expect: S1 CurrentStock 35 → 32, AvailableStock 33 → 30
+POST http://localhost:4004/odata/v4/movement/goodsIssue
+Content-Type: application/json
+
+{
+  "productID": "P1",
+  "warehouseID": "W1",
+  "qty": 3,
+  "movedBy": "CoachA"
+}
+
+###
+
+### Issue P3/W1 qty=10
+### expect: S5 CurrentStock 100 → 90
+POST http://localhost:4004/odata/v4/movement/goodsIssue
+Content-Type: application/json
+
+{
+  "productID": "P3",
+  "warehouseID": "W1",
+  "qty": 10,
+  "movedBy": "CoachB"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/StockLevels
+### verify: S1 CurrentStock=32, S5 CurrentStock=90
+
+
+### =====================================================
+### 8. STOCK TRANSFER — deduct source, add destination
+### =====================================================
+
+### Transfer P2 from W1 → W2, qty=10
+### expect: S3 CurrentStock 50 → 40, S4 CurrentStock 0 → 10
+POST http://localhost:4004/odata/v4/movement/stockTransfer
+Content-Type: application/json
+
+{
+  "productID": "P2",
+  "fromWarehouse": "W1",
+  "toWarehouse": "W2",
+  "qty": 10,
+  "movedBy": "ManagerA"
+}
+
+###
+
+### Transfer P5 from W2 → W1, qty=5
+### expect: S9 CurrentStock 20 → 15, S8 CurrentStock 5 → 10
+POST http://localhost:4004/odata/v4/movement/stockTransfer
+Content-Type: application/json
+
+{
+  "productID": "P5",
+  "fromWarehouse": "W2",
+  "toWarehouse": "W1",
+  "qty": 5,
+  "movedBy": "ManagerA"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/StockLevels
+### verify: S3=40, S4=10, S8=10, S9=15
+
+
+### =====================================================
+### 9. EDGE CASES — must all fail cleanly
+### =====================================================
+
+### 400 — insufficient stock on goodsIssue
+### expect: 400 "Insufficient stock. Available: 30, Requested: 999"
+POST http://localhost:4004/odata/v4/movement/goodsIssue
+Content-Type: application/json
+
+{
+  "productID": "P1",
+  "warehouseID": "W1",
+  "qty": 999,
+  "movedBy": "TestUser"
+}
+
+###
+
+### 404 — invalid product on goodsReceipt
+### expect: 404 "Stock not found"
+POST http://localhost:4004/odata/v4/movement/goodsReceipt
+Content-Type: application/json
+
+{
+  "productID": "INVALID",
+  "warehouseID": "W1",
+  "qty": 10,
+  "movedBy": "TestUser"
+}
+
+###
+
+### 400 — insufficient stock on stockTransfer
+### expect: 400 "Insufficient stock"
+POST http://localhost:4004/odata/v4/movement/stockTransfer
+Content-Type: application/json
+
+{
+  "productID": "P2",
+  "fromWarehouse": "W1",
+  "toWarehouse": "W2",
+  "qty": 9999,
+  "movedBy": "TestUser"
+}
+
+###
+
+### 404 — invalid destination warehouse on stockTransfer
+### expect: 404 "Stock not found in destination warehouse INVALID"
+POST http://localhost:4004/odata/v4/movement/stockTransfer
+Content-Type: application/json
+
+{
+  "productID": "P2",
+  "fromWarehouse": "W1",
+  "toWarehouse": "INVALID",
+  "qty": 5,
+  "movedBy": "TestUser"
+}
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/StockLevels
+### verify: numbers unchanged after all 4 error cases above
+
+
+### =====================================================
+### 10. VERIFY FINAL STATE
+### =====================================================
+
+GET http://localhost:4004/odata/v4/movement/StockMovements
+### expect: only the SUCCESSFUL movements — 2 receipts + 2 issues + 2 transfers = 6 records
+### the 4 error cases above must NOT appear here
+
+###
+
+GET http://localhost:4004/odata/v4/inventory/StockLevels
+### final expected state:
+### S1  P1/W1  CurrentStock=32  ReservedStock=2   AvailableStock=30
+### S2  P1/W2  CurrentStock=10  ReservedStock=0   AvailableStock=10
+### S3  P2/W1  CurrentStock=40  ReservedStock=5   AvailableStock=35
+### S4  P2/W2  CurrentStock=10  ReservedStock=0   AvailableStock=10
+### S5  P3/W1  CurrentStock=90  ReservedStock=10  AvailableStock=80
+### S6  P3/W2  CurrentStock=40  ReservedStock=5   AvailableStock=35
+### S7  P4/W1  CurrentStock=23  ReservedStock=0   AvailableStock=23
+### S8  P5/W1  CurrentStock=10  ReservedStock=1   AvailableStock=9
+### S9  P5/W2  CurrentStock=15  ReservedStock=0   AvailableStock=15
