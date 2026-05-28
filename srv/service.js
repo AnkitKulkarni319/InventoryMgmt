@@ -236,7 +236,7 @@ this.before('UPDATE', 'StockMovements', async (req) => {
     const movement = await SELECT.one.from(StockMovements).where({ ID });
 
     if (!movement) return req.error(404, 'Movement not found');
-    if (movement.ActionRequested !== 'GoodsReceipt') return req.error(400, 'Only Goods Receipt action is allowed');
+    if (movement.ActionRequested_code  !== 'GoodsReceipt') return req.error(400, 'Only Goods Receipt action is allowed');
     if (movement.MovementType) return req.error(400, `Already processed as ${movement.MovementType}`);
 
     const product = await SELECT.one.from(Products).where({ ID: movement.Product_ID });
@@ -266,7 +266,7 @@ this.before('UPDATE', 'StockMovements', async (req) => {
     const movement = await SELECT.one.from(StockMovements).where({ ID });
 
     if (!movement) return req.error(404, 'Movement not found');
-    if (movement.ActionRequested !== 'GoodsIssue') return req.error(400, 'Only Goods Issue action is allowed');
+    if (movement.ActionRequested_code  !== 'GoodsIssue') return req.error(400, 'Only Goods Issue action is allowed');
     if (movement.MovementType) return req.error(400, `Already processed as ${movement.MovementType}`);
 
     const stock = await SELECT.one.from(StockLevels).where({ Product_ID: movement.Product_ID, Warehouse_ID: movement.FromWarehouse_ID });
@@ -294,7 +294,7 @@ this.before('UPDATE', 'StockMovements', async (req) => {
     const movement = await SELECT.one.from(StockMovements).where({ ID });
 
     if (!movement) return req.error(404, 'Movement not found');
-    if (movement.ActionRequested !== 'Transfer') return req.error(400, 'Only Stock Transfer action is allowed');
+    if (movement.ActionRequested_code  !== 'Transfer') return req.error(400, 'Only Stock Transfer action is allowed');
     if (movement.MovementType) return req.error(400, `Already processed as ${movement.MovementType}`);
     if (movement.FromWarehouse_ID === movement.ToWarehouse_ID) return req.error(400, 'Source and destination warehouse cannot be same');
 

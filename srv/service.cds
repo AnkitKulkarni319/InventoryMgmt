@@ -110,8 +110,10 @@ service MovementService {
     entity MovementKPIs as projection on db.MovementKPIs;
     action checkPendingStockMovements() returns String;
     //entity actionRequestedView as projection on db.actionRequestedView;
-
-
     
+
+
+        //entity ActionTypes as projection on db.ActionTypes;
+    entity ActionTypes     as projection on db.ActionTypes;
   
 }

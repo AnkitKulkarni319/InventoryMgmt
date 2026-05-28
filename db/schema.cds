@@ -101,7 +101,8 @@ entity Warehouses : cuid, managed {
 }
 
     entity StockMovements : cuid, managed {
-        ActionRequested : ActionType   @Common.Label: 'Action Requested';
+        ActionRequested :Association to ActionTypes
+        not null   @Common.Label: 'Action Requested';
         MovementType  : MovementType   @Common.Label: 'Movement Type';
         Product       : Association to Products not null  @mandatory  @Common.Label: 'Product';
         FromWarehouse : Association to Warehouses @Common.Label: 'From Warehouse';
@@ -137,3 +138,8 @@ type ActionType : String @assert.range enum {
                 Quantity,
                 1 as movementCount : Integer
         };
+
+        entity ActionTypes  {
+    key code : String(30) not null;
+    name : String(100) not null;
+}

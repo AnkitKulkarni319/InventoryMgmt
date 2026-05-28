@@ -18,7 +18,20 @@ annotate service.StockMovements with {
 
 annotate service.StockMovements with {
 
-    ActionRequested @Common.ValueListWithFixedValues: true;
+    ActionRequested @(
+        Common.ValueListWithFixedValues: true,
+        Common.ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'ActionTypes',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : ActionRequested_code,
+                    ValueListProperty : 'code',
+                },
+            ],
+        },
+    );
 
     Product @Common.ValueList: {
         $Type         : 'Common.ValueListType',
@@ -71,11 +84,11 @@ annotate service.StockMovements with {
     FromWarehouse @Common.FieldControl: {
         $edmJson: {
             $If: [
-                { $Eq: [ { $Path: 'ActionRequested' }, 'GoodsIssue' ] },
+                { $Eq: [ { $Path: 'ActionRequested_code' }, 'GoodsIssue' ] },
                 3,
                 {
                     $If: [
-                        { $Eq: [ { $Path: 'ActionRequested' }, 'Transfer' ] },
+                        { $Eq: [ { $Path: 'ActionRequested_code' }, 'Transfer' ] },
                         3,
                         1
                     ]
@@ -87,11 +100,11 @@ annotate service.StockMovements with {
     ToWarehouse @Common.FieldControl: {
         $edmJson: {
             $If: [
-                { $Eq: [ { $Path: 'ActionRequested' }, 'GoodsReceipt' ] },
+                { $Eq: [ { $Path: 'ActionRequested_code' }, 'GoodsReceipt' ] },
                 3,
                 {
                     $If: [
-                        { $Eq: [ { $Path: 'ActionRequested' }, 'Transfer' ] },
+                        { $Eq: [ { $Path: 'ActionRequested_code' }, 'Transfer' ] },
                         3,
                         1
                     ]
@@ -103,17 +116,12 @@ annotate service.StockMovements with {
 
 annotate service.StockMovements with @(
     UI.SelectionFields: [
-        ActionRequested,
+        ActionRequested_code,
         Product_ID,
         MovementDate
     ],
 
     UI.LineItem: [
-        {
-            $Type: 'UI.DataField',
-            Value: ActionRequested,
-            Label: 'Action Requested'
-        },
         {
             $Type: 'UI.DataField',
             Value: Product_ID,
@@ -136,7 +144,7 @@ annotate service.StockMovements with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: MovementType,
+            Value:  ActionRequested.name,
             Label: 'Processed Type'
         },
 
@@ -149,7 +157,7 @@ annotate service.StockMovements with @(
                 $edmJson: {
                     $And: [
                         { $Eq: [ { $Path: 'IsActiveEntity' }, true ] },
-                        { $Eq: [ { $Path: 'ActionRequested' }, 'GoodsReceipt' ] },
+                        { $Eq: [ { $Path: 'ActionRequested_code' }, 'GoodsReceipt' ] },
                         { $Eq: [ { $Path: 'MovementType' }, null ] }
                     ]
                 }
@@ -165,7 +173,7 @@ annotate service.StockMovements with @(
                 $edmJson: {
                     $And: [
                         { $Eq: [ { $Path: 'IsActiveEntity' }, true ] },
-                        { $Eq: [ { $Path: 'ActionRequested' }, 'GoodsIssue' ] },
+                        { $Eq: [ { $Path: 'ActionRequested_code' }, 'GoodsIssue' ] },
                         { $Eq: [ { $Path: 'MovementType' }, null ] }
                     ]
                 }
@@ -181,7 +189,7 @@ annotate service.StockMovements with @(
                 $edmJson: {
                     $And: [
                         { $Eq: [ { $Path: 'IsActiveEntity' }, true ] },
-                        { $Eq: [ { $Path: 'ActionRequested' }, 'Transfer' ] },
+                        { $Eq: [ { $Path: 'ActionRequested_code' }, 'Transfer' ] },
                         { $Eq: [ { $Path: 'MovementType' }, null ] }
                     ]
                 }
@@ -218,10 +226,13 @@ annotate service.StockMovements with @(
 
     UI.FieldGroup #General: {
         Data: [
-            { Value: ActionRequested },
             { Value: Product_ID },
             { Value: Quantity },
-            { Value: MovementDate }
+            { Value: MovementDate },
+            {
+                $Type : 'UI.DataField',
+                Value : ActionRequested_code,
+            },
         ]
     },
 
@@ -254,3 +265,21 @@ annotate service.Warehouses with {
 };
 
   
+annotate service.ActionTypes with {
+    code @(
+        Common.ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'ActionTypes',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : code,
+                    ValueListProperty : 'code',
+                },
+            ],
+        },
+        Common.ValueListWithFixedValues : true,
+        Common.Text : name,
+        Common.Text.@UI.TextArrangement : #TextOnly,
+)};
+
